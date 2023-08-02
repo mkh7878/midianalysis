@@ -1,14 +1,6 @@
 import mido
 import intervals
-from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.graphics import Color, Ellipse
-import circle
-from circle import CircleApp, CircleWidget
-import threading
-from common import circle_width
-
-
+import time
 
 #Tells us if there are any midi devices attached, and if so, what they are called
 #My midi keybaord is called "MPK mini 3"
@@ -22,9 +14,13 @@ def findMidiDevice():
 if __name__ == '__main__':
     findMidiDevice()
 
-import mido
+def start_timer():
+    return time.time()
 
-def print_notes():
+def musicmusic():
+    #start the timer
+    #start_time = start_timer()
+
     # Set the backend to 'mido.backends.portmidi' or 'mido.backends.rtmidi'
     mido.set_backend('mido.backends.portmidi')
 
@@ -41,26 +37,37 @@ def print_notes():
         # Infinite loop to keep capturing MIDI messages
         while True:
             for message in port.iter_pending():
-                if message.type == 'note_on':
-                    captured_notes.append(message.note)
-                    current_note = message.note
-                    interval = abs(captured_notes[0] - current_note)
-                    interval = interval % 12
-                    print(intervals.intervals [interval])
-                    circle_width = interval * 100
 
-                #elif message.type == 'note_off':
-                    # print(captured_notes)
-                    # music_key = captured_notes[0]
-                    # print('music key =',captured_notes[0])
+                #when a note is played on the midi keyboard
+                if message.type == 'note_on':
+
+                    #the current note value in relation to 0
+                    current_note = message.note % 12
+
+                    #add to the list of captured notes
+                    captured_notes.append(current_note)
+
+                    print('current note value:', current_note)
+
+                    #the key is the first note played, saved in the first spot in the list of captured notes
+                    key = captured_notes[0]
+
+                    #if the captured note value is higher than the key, it calculates the interval
+                    #by subtracting key from note value
+                    if current_note <= key:
+                        interval = key - current_note
+
+                    #if the note value is larger than key
+                    else:
+                        interval = 13 - current_note
+
+                    #prints the interval description from the "intervals" module
+                    print(intervals.intervals[interval])
+
+                elif message.type == 'note_off':
+                    #print('note off')
+
+
 
 if __name__ == '__main__':
-
-    midi_thread = threading.Thread(target=print_notes, daemon=True)
-    midi_thread.start()
-
-    circle_app = CircleApp()  # Create an instance of CircleApp
-    circle_app.run()
-
-
-
+    musicmusic()
