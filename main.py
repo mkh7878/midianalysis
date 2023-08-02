@@ -1,6 +1,7 @@
 import mido
 import intervals
 import time
+from playsinewaves import play_sound
 
 #Tells us if there are any midi devices attached, and if so, what they are called
 #My midi keybaord is called "MPK mini 3"
@@ -47,27 +48,33 @@ def musicmusic():
                     #add to the list of captured notes
                     captured_notes.append(current_note)
 
-                    print('current note value:', current_note)
+                    #print('current note value:', current_note)
 
                     #the key is the first note played, saved in the first spot in the list of captured notes
                     key = captured_notes[0]
 
                     #if the captured note value is higher than the key, it calculates the interval
                     #by subtracting key from note value
-                    if current_note <= key:
-                        interval = key - current_note
+                    if current_note < key:
+                        interval = 12 - (key - current_note)
 
-                    #if the note value is larger than key
+                    elif current_note > key:
+                        interval = current_note - key
+
                     else:
-                        interval = 13 - current_note
+                        interval = 0
+
+                    print(interval)
+
+                    frequency = 2 ** ((message.note - 69) / 12) * 440
+                    duration = 0.5  # Duration in seconds (you can adjust this)
+                    play_sound(frequency, duration)
 
                     #prints the interval description from the "intervals" module
-                    print(intervals.intervals[interval])
+                    #print(intervals.intervals[interval])
 
                 elif message.type == 'note_off':
-                    #print('note off')
-
-
+                    print('----')
 
 if __name__ == '__main__':
     musicmusic()
