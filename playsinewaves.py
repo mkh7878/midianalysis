@@ -11,3 +11,4 @@ def generate_sine_wave(frequency, duration, sample_rate):
 def play_sound(frequency, duration, sample_rate=44100):
     audio_data = generate_sine_wave(frequency, duration, sample_rate)
     sd.play(audio_data, sample_rate, blocking=True)  # Use blocking=True to ensure audio is played
+

@@ -30,3 +30,17 @@ notes = {
     11: 'B'
 }
 
+plotting_intervals = {
+    0: 'plus_Y',
+    1: 'minus_Y',
+    2: 'plus_X',
+    3: 'minus_X',
+    4: 'plus_Y',
+    5: 'plus_Y',
+    6: 'minus_Y',
+    7: 'minus_X',
+    8: 'plus_X',
+    9: 'plus_X',
+    10: 'plus_X',
+    11: 'minus_Y'
+}

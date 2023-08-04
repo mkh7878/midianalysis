@@ -2,6 +2,13 @@ import mido
 import intervals
 import time
 from playsinewaves import play_sound
+from timestamps import TimeTracker
+from circleplotter import CircleApp, MidiEvent
+import threading
+
+time_tracker = TimeTracker()
+# x_coordinate = 300
+# y_coordinate = 200
 
 #Tells us if there are any midi devices attached, and if so, what they are called
 #My midi keybaord is called "MPK mini 3"
@@ -20,7 +27,7 @@ def start_timer():
 
 def musicmusic():
     #start the timer
-    #start_time = start_timer()
+    start_time = start_timer()
 
     # Set the backend to 'mido.backends.portmidi' or 'mido.backends.rtmidi'
     mido.set_backend('mido.backends.portmidi')
@@ -34,6 +41,9 @@ def musicmusic():
 
         # Create an empty list to store the captured notes
         captured_notes = []
+
+        #Create a list to store the timing between notes being played
+        in_between_time = []
 
         # Infinite loop to keep capturing MIDI messages
         while True:
@@ -66,15 +76,43 @@ def musicmusic():
 
                     print(interval)
 
+
                     frequency = 2 ** ((message.note - 69) / 12) * 440
                     duration = 0.5  # Duration in seconds (you can adjust this)
                     play_sound(frequency, duration)
 
+                    #attempt to save times in ebtween note on events
+                    # time_tracker.log_time_difference()
+
+
                     #prints the interval description from the "intervals" module
                     #print(intervals.intervals[interval])
 
-                elif message.type == 'note_off':
-                    print('----')
+                #elif message.type == 'note_off':
+                    # average_bpm = time_tracker.get_bpm()
+                    # print(average_bpm)
+                    # in_between_times = time.time()
+                    # in_between_time.append(in_between_times * 1000)
+                    # print (in_between_time)
+
+
+# if __name__ == '__main__':
+#
+#     # Start the music function in a separate thread
+#     music_thread = threading.Thread(target=musicmusic)
+#     music_thread.start()
+#
+#     # Run the Kivy app
+#     CircleApp(x=x_coordinate, y=y_coordinate).run()
+#
 
 if __name__ == '__main__':
-    musicmusic()
+    # Create the MidiEvent instance
+    midi_event = MidiEvent()
+
+    # Start the music function in a separate thread and pass the MidiEvent instance
+    music_thread = threading.Thread(target=musicmusic, args=(midi_event,))
+    music_thread.start()
+
+    # Run the Kivy app with the MidiEvent instance
+    CircleApp(midi_event=midi_event).run()
