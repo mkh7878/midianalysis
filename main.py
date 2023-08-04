@@ -3,12 +3,12 @@ import intervals
 import time
 from playsinewaves import play_sound
 from timestamps import TimeTracker
-from circleplotter import CircleApp, MidiEvent
+from circleplotter import CircleApp
 import threading
 
 time_tracker = TimeTracker()
-# x_coordinate = 300
-# y_coordinate = 200
+x_coordinate = 300
+y_coordinate = 200
 
 #Tells us if there are any midi devices attached, and if so, what they are called
 #My midi keybaord is called "MPK mini 3"
@@ -96,23 +96,12 @@ def musicmusic():
                     # print (in_between_time)
 
 
-# if __name__ == '__main__':
-#
-#     # Start the music function in a separate thread
-#     music_thread = threading.Thread(target=musicmusic)
-#     music_thread.start()
-#
-#     # Run the Kivy app
-#     CircleApp(x=x_coordinate, y=y_coordinate).run()
-#
-
 if __name__ == '__main__':
-    # Create the MidiEvent instance
-    midi_event = MidiEvent()
 
-    # Start the music function in a separate thread and pass the MidiEvent instance
-    music_thread = threading.Thread(target=musicmusic, args=(midi_event,))
+    # Start the music function in a separate thread
+    music_thread = threading.Thread(target=musicmusic)
     music_thread.start()
 
-    # Run the Kivy app with the MidiEvent instance
-    CircleApp(midi_event=midi_event).run()
+    # Run the Kivy app
+    CircleApp(x=x_coordinate, y=y_coordinate).run()
+
