@@ -10,7 +10,7 @@ time_tracker = TimeTracker()
 captured_notes = []
 
 # Tells us if there are any midi devices attached, and if so, what they are called
-# My midi keybaord is called "MPK mini 3"
+# My midi keyboard is called "MPK mini 3"
 def findMidiDevice():
     mido.set_backend('mido.backends.rtmidi')
     # mido.set_backend('mido.backends.portmidi')
@@ -18,7 +18,6 @@ def findMidiDevice():
     print("Available MIDI input devices:")
     for name in input_names:
         print(name)
-
 
 if __name__ == '__main__':
     findMidiDevice()
@@ -55,7 +54,6 @@ def musicmusic():
                     duration = 0.05  # Duration in seconds (you can adjust this)
                     play_sound(frequency, duration)
 
-
                 # elif message.type == 'note_off':
                 # average_bpm = time_tracker.get_bpm()
                 # print(average_bpm)
@@ -65,7 +63,7 @@ def musicmusic():
 
 #determining key based on  Krumhansl and Kessler’s (1982) study of tonal organization
 #essentially, the key is determined based on which note is played the most
-#then, we see if the magor or minor 3rd has been played more to determine if it's a minor or magor key
+#then, we see if the major or minor 3rd has been played more to determine if it's a minor or magor key
 #this is a very simplified version of the theory, and will become more complex as the project grows
 def determine_key():
     time.sleep(10)
@@ -80,33 +78,41 @@ def determine_key():
 
     #holds the number of times a note is played, and changes when one higher is found
     how_many_times = 0
-    #variable to hold the index number for whichever note is played the most
-    which_note = 0
+    #variable to hold the index number for whichever note is played the most - this will be the likekly key
+    likely_key = 0
 
     #go through interval_recurrance_list and determine which note has been played the most
     for tally in range(12):
         if intervals.interval_recurrance_list[tally] > how_many_times:
             how_many_times = intervals.interval_recurrance_list[tally]
-            which_note = tally
+            likely_key = tally
 
-    likely_key = intervals.notes[which_note]
+    likely_key_letter = intervals.notes[likely_key]
 
-    print('the most played note is:', likely_key, 'played', how_many_times, 'times.')
+    print('the most played note is:', likely_key_letter, 'played', how_many_times, 'times.')
+
+    #According to the Krumhansl and Kessler theory, the key of the piece is likely the note played most
+    #and then it's possible to see whether the key is major or minor based on if the major or minor 3rd is
+    #played more than the other.
+    key_major_third =  (12-(8-likely_key))%12
+    #print('major third:', intervals.notes[key_major_third])
+    key_minor_third = (12-(9-likely_key))%12
+    #print('minor third:', intervals.notes[key_minor_third])
 
 
-    #set that note as the key
-    #figure out whether the minor or magor 3rd has been played more often
-    #determines if it's a magor or minor key
+    if intervals.interval_recurrance_list[key_major_third] > intervals.interval_recurrance_list[key_minor_third]:
+        print('The music is in the key of', likely_key_letter,'major.')
+    elif intervals.interval_recurrance_list[key_minor_third] > intervals.interval_recurrance_list[key_major_third]:
+        print('The music is in the key of', likely_key_letter, 'minor.')
+    else:
+        print('The music is in the key of', likely_key_letter, ', but we can not yet determine if it is major or minor.')
+
     #eventually we will need to add check points to see if the actual notes being played match up with the key
+    #and use other more complex ways of determining key.
+    #but this works for now and is pretty fun.
     #I think this should be checked every 30 seconds?
 
-    print(intervals.interval_recurrance_list)
-
-    # for value in intervals.interval_recurrance.values():
-    #     print(value, ':', end='')
-    #     for _ in range(intervals.interval_recurrance[value]):
-    #         print('x', end='')
-    #     print()
+    #print(intervals.interval_recurrance_list)
 
 if __name__ == '__main__':
     # Start the music function in a separate thread
